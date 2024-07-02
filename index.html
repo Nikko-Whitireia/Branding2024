@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Grid</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="gridContainer"></div>
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <div class="modal-content-container">
+            <img class="modal-content" id="fullImage">
+            <div id="imageName" class="image-name"></div>
+        </div>
+    </div>
+    <script>
+        const gridContainer = document.getElementById('gridContainer');
+        const modal = document.getElementById('imageModal');
+        const fullImage = document.getElementById('fullImage');
+        const imageName = document.getElementById('imageName');
+        const closeBtn = document.getElementsByClassName('close')[0];
+
+        async function fetchImages() {
+            try {
+                const response = await fetch('/images');
+                if (response.ok) {
+                    const images = await response.json();
+                    return images;
+                } else {
+                    console.error('Failed to load images');
+                    return [];
+                }
+            } catch (error) {
+                console.error('Error fetching images:', error);
+                return [];
+            }
+        }
+
+        function getBaseName(file) {
+            return file.split('.').slice(0, -1).join('.');
+        }
+
+        function createSquares(images) {
+            images.forEach((image) => {
+                const square = document.createElement('div');
+                square.className = 'square';
+                const encodedImage = encodeURIComponent(image);
+                square.style.backgroundImage = `url(images/${encodedImage})`;
+
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = getBaseName(image);
+                square.appendChild(tooltip);
+
+                square.addEventListener('mousemove', (e) => {
+                    tooltip.style.left = `${e.clientX + 10}px`; // Adjust the offset as needed
+                    tooltip.style.top = `${e.clientY}px`;
+                });
+
+                square.addEventListener('click', () => {
+                    fullImage.src = `images/${encodedImage}`;
+                    imageName.textContent = getBaseName(image);
+                    modal.style.display = 'block';
+                });
+
+                gridContainer.appendChild(square);
+            });
+        }
+
+        async function init() {
+            const images = await fetchImages();
+            images.sort(() => Math.random() - 0.5); // Shuffle the images array
+            createSquares(images);
+        }
+
+        init();
+
+        // Infinite scroll functionality
+        gridContainer.addEventListener('scroll', () => {
+            if (gridContainer.scrollTop + gridContainer.clientHeight >= gridContainer.scrollHeight - 200) {
+                init(); // Load more images when scrolling near the bottom
+            }
+            if (gridContainer.scrollLeft + gridContainer.clientWidth >= gridContainer.scrollWidth - 200) {
+                init(); // Load more images when scrolling near the right
+            }
+        });
+
+        // Close the modal when the user clicks on <span> (x)
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // Close the modal when the user clicks anywhere outside of the modal
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Ensure the modal is hidden on page load
+        modal.style.display = "none";
+    </script>
+</body>
+</html>

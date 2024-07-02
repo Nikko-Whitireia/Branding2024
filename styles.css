@@ -1,0 +1,136 @@
+/* styles.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+#gridContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 200px);
+    grid-template-rows: repeat(auto-fill, 200px);
+    gap: 5px;
+    width: 120vw;
+    height: 110vh;
+    overflow: auto;
+    justify-content: stretch;
+    position: relative;
+}
+
+.square {
+    width: 200px;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    cursor: pointer;
+}
+
+/* Tooltip styles */
+.tooltip {
+    position: fixed;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+    pointer-events: none;
+    transform: translate(10px, -50%);
+    visibility: hidden;
+    white-space: nowrap;
+    z-index: 10; /* Ensure the tooltip appears above other elements */
+}
+
+.square:hover .tooltip {
+    visibility: visible;
+}
+
+/* Modal styles */
+.modal {
+    display: none; /* Ensure the modal is hidden initially */
+    position: fixed;
+    z-index: 20;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px; /* Add padding at the top */
+}
+
+.modal-content-container {
+    text-align: center;
+}
+
+
+.image-name {
+    color: white;
+    font-size: 24px;
+    margin-top: 10px;
+
+}
+.modal-content {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 90%;
+
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #fff;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Media Query for smaller screens */
+@media (max-width: 800px) {
+    #gridContainer {
+        grid-template-columns: repeat(auto-fill, 150px);
+        grid-template-rows: repeat(auto-fill, 150px);
+        gap: 5px;
+        width: 150vw;
+        height: 150vh;
+    }
+
+    .square {
+        width: 150px;
+        height: 150px;
+    }
+
+    .image-name {
+        font-size: 20px;
+    }
+
+    .modal-content {
+        max-width: 80%;
+        max-height: 80%;
+    }
+
+
+    .close {
+        font-size: 35px;
+    }
+}
