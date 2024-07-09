@@ -16,7 +16,7 @@ html, body {
     grid-template-columns: repeat(auto-fill, 200px);
     grid-template-rows: repeat(auto-fill, 200px);
     gap: 5px;
-    width: 120vw;
+    width: 110vw;
     height: 110vh;
     overflow: auto;
     justify-content: stretch;
@@ -66,26 +66,25 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: 20px; /* Add padding at the top */
+    padding: 20px;
 }
 
 .modal-content-container {
     text-align: center;
+    max-height: 100%;
 }
 
+.modal-content {
+    margin: auto;
+    display: block;
+    max-width: 100%;
+    max-height: 95vh; /* Limit the image height to 95% of the viewport height */
+}
 
 .image-name {
     color: white;
     font-size: 24px;
     margin-top: 10px;
-
-}
-.modal-content {
-    margin: auto;
-    display: block;
-    max-width: 90%;
-    max-height: 90%;
-
 }
 
 .close {
@@ -105,6 +104,23 @@ html, body {
     cursor: pointer;
 }
 
+.sort-button {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 30; /* Ensure the button appears above other elements */
+}
+
+.sort-button:hover {
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
 /* Media Query for smaller screens */
 @media (max-width: 800px) {
     #gridContainer {
@@ -120,17 +136,22 @@ html, body {
         height: 150px;
     }
 
+    .modal-content {
+        max-width: 80%;
+        max-height: 80vh;
+    }
+
     .image-name {
         font-size: 20px;
     }
 
-    .modal-content {
-        max-width: 80%;
-        max-height: 80%;
-    }
-
-
     .close {
         font-size: 35px;
+    }
+
+    .sort-button {
+        bottom: 10px;
+        left: 10px;
+        padding: 8px 16px;
     }
 }
