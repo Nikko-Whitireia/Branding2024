@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <button id="sortButton" class="sort-button">Sort Alphabetically</button>
     <div id="gridContainer"></div>
     <div id="imageModal" class="modal">
         <span class="close">&times;</span>
@@ -22,6 +23,11 @@
         const fullImage = document.getElementById('fullImage');
         const imageName = document.getElementById('imageName');
         const closeBtn = document.getElementsByClassName('close')[0];
+        const sortButton = document.getElementById('sortButton');
+
+        let isSortedAlphabetically = false;
+        let imageList = [];
+        let displayedImages = [];
 
         async function fetchImages() {
             try {
@@ -43,12 +49,21 @@
             return file.split('.').slice(0, -1).join('.');
         }
 
-        function createSquares(images) {
+        function createSquares(images, append = false) {
+            if (!append) {
+                gridContainer.innerHTML = ''; // Clear the grid container
+                displayedImages = []; // Clear the displayed images list
+            }
+
             images.forEach((image) => {
                 const square = document.createElement('div');
                 square.className = 'square';
-                const encodedImage = encodeURIComponent(image);
-                square.style.backgroundImage = `url(images/${encodedImage})`;
+                const encodedImage = encodeURIComponent(image).replace(/\(/g, '%28').replace(/\)/g, '%29');
+                const imageUrl = `images/${encodedImage}`;
+                square.style.backgroundImage = `url(${imageUrl})`;
+
+                // Log the image URL to the console
+                console.log(`Loading image: ${imageUrl}`);
 
                 const tooltip = document.createElement('div');
                 tooltip.className = 'tooltip';
@@ -61,30 +76,43 @@
                 });
 
                 square.addEventListener('click', () => {
-                    fullImage.src = `images/${encodedImage}`;
+                    fullImage.src = imageUrl;
                     imageName.textContent = getBaseName(image);
                     modal.style.display = 'block';
                 });
 
                 gridContainer.appendChild(square);
+                displayedImages.push(square);
             });
         }
 
         async function init() {
             const images = await fetchImages();
-            images.sort(() => Math.random() - 0.5); // Shuffle the images array
+            images.sort(() => Math.random() - 0.5); // Shuffle the images array initially
+            imageList = images;
             createSquares(images);
         }
 
+        // Initial load
         init();
+
+        sortButton.addEventListener('click', () => {
+            if (isSortedAlphabetically) {
+                imageList.sort(() => Math.random() - 0.5); // Shuffle the images randomly
+                sortButton.textContent = 'Sort Alphabetically';
+            } else {
+                imageList.sort((a, b) => a.localeCompare(b)); // Sort images alphabetically
+                sortButton.textContent = 'Sort Randomly';
+            }
+            createSquares(imageList); // Re-create squares with sorted images
+            isSortedAlphabetically = !isSortedAlphabetically;
+        });
 
         // Infinite scroll functionality
         gridContainer.addEventListener('scroll', () => {
-            if (gridContainer.scrollTop + gridContainer.clientHeight >= gridContainer.scrollHeight - 200) {
-                init(); // Load more images when scrolling near the bottom
-            }
-            if (gridContainer.scrollLeft + gridContainer.clientWidth >= gridContainer.scrollWidth - 200) {
-                init(); // Load more images when scrolling near the right
+            if (gridContainer.scrollTop + gridContainer.clientHeight >= gridContainer.scrollHeight - 200 ||
+                gridContainer.scrollLeft + gridContainer.clientWidth >= gridContainer.scrollWidth - 200) {
+                createSquares(imageList, true); // Append images when scrolling near the bottom or right
             }
         });
 
